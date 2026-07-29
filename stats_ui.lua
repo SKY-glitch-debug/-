@@ -7,6 +7,27 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local plr = Players.LocalPlayer
 
+local cfg = getgenv().CometHub or {}
+local performance = cfg["Performance"] or {}
+if performance["Low CPU"] then
+	local existingMask = plr.PlayerGui:FindFirstChild("CometLowCPUMask")
+	if existingMask then existingMask:Destroy() end
+
+	local maskGui = Instance.new("ScreenGui")
+	maskGui.Name = "CometLowCPUMask"
+	maskGui.ResetOnSpawn = false
+	maskGui.IgnoreGuiInset = true
+	maskGui.DisplayOrder = 998
+	maskGui.Parent = plr.PlayerGui
+
+	local mask = Instance.new("Frame")
+	mask.Name = "Blackout"
+	mask.Size = UDim2.fromScale(1, 1)
+	mask.BackgroundColor3 = Color3.new(0, 0, 0)
+	mask.BorderSizePixel = 0
+	mask.Parent = maskGui
+end
+
 local gui = Instance.new("ScreenGui")
 gui.Name = "CometStatusUI"
 gui.ResetOnSpawn = false
@@ -79,7 +100,9 @@ task.spawn(function()
 	while gui.Parent do
 		local s = getgenv().CometHubStatus or {}
 		fields.User.Text = "👤 User: " .. value(s.User or plr.Name)
-		fields.Level.Text = "⭐ Level: " .. value(s.Level)
+		local level = value(s.Level)
+		local levelMax = value(s.LevelMax or 100)
+		fields.Level.Text = "⭐ Level: " .. level .. " / " .. levelMax
 		fields.Bag.Text = "💰 Coins in Bag: " .. value(s.Bag)
 		fields.Coins.Text = "💵 Total Coins: " .. value(s.Coins)
 		fields.Shells.Text = "🐚 Shells: " .. value(s.Shells)
